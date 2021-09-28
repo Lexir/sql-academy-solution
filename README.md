@@ -4,9 +4,9 @@
 ***
 # My profile https://sql-academy.org/ru/profile/18792
 ***
-## https://sql-academy.org/ru/trainer/tasks/17
 
 # Task 17. Определить, сколько потратил в 2005 году каждый из членов семьи
+## https://sql-academy.org/ru/trainer/tasks/17
 ### Поля в результирующей таблице: 
 **member_name, status, costs**
 
@@ -28,11 +28,8 @@ GROUP BY
     member_name,
     status
 ```
-
-
-## https://sql-academy.org/ru/trainer/tasks/18
-
 # Task 18. Узнать, кто старше всех в семьe
+## https://sql-academy.org/ru/trainer/tasks/18
 ### Поля в результирующей таблице: 
 **member_name**
 
@@ -46,9 +43,8 @@ WHERE birthday=
     FROM FamilyMembers)
 ```
 
-## https://sql-academy.org/ru/trainer/tasks/19
-
 # Task 19. Определить, кто из членов семьи покупал картошку (potato)
+## https://sql-academy.org/ru/trainer/tasks/19
 ### Поля в результирующей таблице: 
 **status**
 
@@ -64,9 +60,8 @@ INNER JOIN Goods
 WHERE good_name="potato" 
 ```
 
-## https://sql-academy.org/ru/trainer/tasks/20
-
 # Task 20. Сколько и кто из семьи потратил на развлечения (entertainment). Вывести статус в семье, имя, сумму
+## https://sql-academy.org/ru/trainer/tasks/20
 ### Поля в результирующей таблице: 
 **status, member_name, costs**
 
@@ -75,14 +70,68 @@ WHERE good_name="potato"
 ## SOLUTION
 
 ```sql
-INCORRECT SOLUTION // TODO FIX
-SELECT DISTINCT status, member_name, (amount*unit_price) as costs
+SELECT status,
+         member_name,
+        (amount * unit_price) AS costs
 FROM FamilyMembers
 INNER JOIN Payments
     ON Payments.family_member=FamilyMembers.member_id
 INNER JOIN Goods
     ON Payments.good=Goods.good_id
 INNER JOIN GoodTypes
-    ON Payments.good=Goods.type
-WHERE good_type_name="entertainment" 
+    ON GoodTypes.good_type_id=Goods.type
+WHERE good_type_name="entertainment"
+```
+
+# Task 21. Определить товары, которые покупали более 1 раза
+## https://sql-academy.org/ru/trainer/tasks/21
+### Поля в результирующей таблице: 
+**good_name**
+
+
+## SOLUTION
+
+```sql
+SELECT good_name
+FROM Goods
+INNER JOIN Payments
+    ON Payments.good=Goods.good_id
+GROUP BY  Payments.good
+HAVING COUNT(Payments.good)>1
+```
+
+# Task 22. Найти имена всех матерей (mother)
+## https://sql-academy.org/ru/trainer/tasks/22
+### Поля в результирующей таблице: 
+**member_name**
+
+## SOLUTION
+
+```sql
+SELECT member_name
+FROM FamilyMembers
+WHERE status='mother'
+```
+
+# Task 23. Найдите самый дорогой деликатес (delicacies) и выведите его стоимость
+## https://sql-academy.org/ru/trainer/tasks/23
+### Поля в результирующей таблице: 
+**good_name, unit_price**
+
+## SOLUTION
+
+```sql
+SELECT good_name,
+         unit_price
+FROM Payments
+INNER JOIN Goods
+    ON Payments.good=Goods.good_id
+WHERE unit_price=
+    (SELECT MAX(unit_price) AS unit_price
+    FROM Payments
+    INNER JOIN Goods
+        ON Payments.good=Goods.good_id
+    INNER JOIN GoodTypes
+        ON Goods.type=GoodTypes.good_type_id
+    WHERE good_type_name="delicacies")
 ```
